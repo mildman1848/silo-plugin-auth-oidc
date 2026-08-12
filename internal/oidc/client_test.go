@@ -37,12 +37,14 @@ func TestAuthorizeURLIncludesPKCEAndScopes(t *testing.T) {
 
 func TestExchangeCodeUsesTokenAndUserinfoEndpoints(t *testing.T) {
 	var gotTokenBody string
+	var gotTokenUser, gotTokenPassword string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/token":
 			body := make([]byte, r.ContentLength)
 			_, _ = r.Body.Read(body)
 			gotTokenBody = string(body)
+			gotTokenUser, gotTokenPassword, _ = r.BasicAuth()
 			_ = json.NewEncoder(w).Encode(TokenResponse{AccessToken: "access-token", TokenType: "Bearer"})
 		case "/userinfo":
 			if r.Header.Get("Authorization") != "Bearer access-token" {
@@ -67,8 +69,11 @@ func TestExchangeCodeUsesTokenAndUserinfoEndpoints(t *testing.T) {
 	if info["sub"] != "user-1" {
 		t.Fatalf("userinfo = %#v", info)
 	}
-	if !strings.Contains(gotTokenBody, "client_secret=secret") || !strings.Contains(gotTokenBody, "code_verifier=verifier-1") {
-		t.Fatalf("token body missing expected fields: %s", gotTokenBody)
+	if gotTokenUser != "silo" || gotTokenPassword != "secret" {
+		t.Fatalf("token BasicAuth = %q/%q", gotTokenUser, gotTokenPassword)
+	}
+	if strings.Contains(gotTokenBody, "client_secret=") || !strings.Contains(gotTokenBody, "code_verifier=verifier-1") {
+		t.Fatalf("token body should contain PKCE verifier but not client_secret: %s", gotTokenBody)
 	}
 }
 

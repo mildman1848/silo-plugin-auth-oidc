@@ -97,10 +97,9 @@ func (c *Client) ExchangeCode(ctx context.Context, code, redirectURI, verifier s
 	values.Set("code", strings.TrimSpace(code))
 	values.Set("redirect_uri", strings.TrimSpace(redirectURI))
 	values.Set("client_id", c.cfg.ClientID)
-	values.Set("client_secret", c.cfg.ClientSecret)
 	values.Set("code_verifier", strings.TrimSpace(verifier))
 	var token TokenResponse
-	if err := c.doForm(ctx, c.discovery.TokenEndpoint, values, &token); err != nil {
+	if err := c.doTokenForm(ctx, c.discovery.TokenEndpoint, values, &token); err != nil {
 		return nil, err
 	}
 	if strings.TrimSpace(token.AccessToken) == "" {
@@ -164,13 +163,14 @@ func (c *Client) discover(ctx context.Context) (Discovery, error) {
 	return disc, nil
 }
 
-func (c *Client) doForm(ctx context.Context, endpoint string, values url.Values, out any) error {
+func (c *Client) doTokenForm(ctx context.Context, endpoint string, values url.Values, out any) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, strings.NewReader(values.Encode()))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.SetBasicAuth(c.cfg.ClientID, c.cfg.ClientSecret)
 	return c.do(req, out)
 }
 
