@@ -1,0 +1,109 @@
+{
+  "plugin_id": "mildman1848.oidc",
+  "version": "0.1.0",
+  "checksum": "__CHECKSUM__",
+  "silo_api_version": "v1",
+  "category": "Authentication/SSO",
+  "presentation": {
+    "display_name": "OIDC SSO",
+    "summary": "Generic OIDC authentication provider for Silo Server.",
+    "description_markdown": "Adds OAuth2/OIDC sign-in to Silo using a self-hosted identity provider such as Authelia, Authentik, or Keycloak. The plugin uses OIDC discovery, authorization-code flow, userinfo claims, and Silo's auth_provider.v1 auto-provisioning/binding model.",
+    "setup_markdown": "1. Create an OIDC confidential client in Authelia, Authentik, Keycloak, or another OIDC provider.\n2. Configure redirect URI in the IdP as shown by Silo's plugin auth binding/OAuth setup. It usually follows Silo's `/api/v1/auth/oauth/{installation_id}/callback` route.\n3. Install this plugin and configure Issuer URL, Client ID, Client Secret, and optional scopes.\n4. Enable the plugin auth binding in Silo Admin \u2192 Plugins, choose auto-provision/default-login according to your policy, then test login.\n\nSecurity: prefer authorization-code flow over LDAP password binds. Keep local admin recovery credentials enabled until SSO login has been verified.",
+    "homepage_url": "https://github.com/mildman1848/silo-plugin-auth-oidc",
+    "source_url": "https://github.com/mildman1848/silo-plugin-auth-oidc",
+    "support_url": "https://github.com/mildman1848/silo-plugin-auth-oidc/issues",
+    "changelog_url": "https://github.com/mildman1848/silo-plugin-auth-oidc/releases",
+    "publisher_name": "Mildman1848",
+    "publisher_url": "https://github.com/mildman1848",
+    "license_spdx": "AGPL-3.0-or-later"
+  },
+  "supported_platforms": [
+    {
+      "os": "linux",
+      "arch": "amd64"
+    },
+    {
+      "os": "linux",
+      "arch": "arm64"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64"
+    }
+  ],
+  "capabilities": [
+    {
+      "type": "auth_provider.v1",
+      "id": "oidc",
+      "display_name": "OIDC SSO",
+      "description": "Authenticate Silo users through a generic OIDC provider.",
+      "auth_modes": [
+        "oauth2"
+      ]
+    }
+  ],
+  "global_config_schema": [
+    {
+      "key": "oidc",
+      "title": "OIDC Provider",
+      "description": "OIDC discovery and client credentials used for SSO.",
+      "required": true,
+      "json_schema": "{\"type\":\"object\",\"properties\":{\"issuer_url\":{\"type\":\"string\",\"format\":\"uri\",\"minLength\":1},\"client_id\":{\"type\":\"string\",\"minLength\":1},\"client_secret\":{\"type\":\"string\",\"minLength\":1,\"writeOnly\":true},\"scopes\":{\"type\":\"string\",\"default\":\"openid profile email\"},\"subject_claim\":{\"type\":\"string\",\"default\":\"sub\"},\"email_claim\":{\"type\":\"string\",\"default\":\"email\"},\"display_name_claim\":{\"type\":\"string\",\"default\":\"name\"}},\"required\":[\"issuer_url\",\"client_id\",\"client_secret\"]}",
+      "admin_form": {
+        "fields": [
+          {
+            "key": "issuer_url",
+            "label": "Issuer URL",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "https://auth.example.test",
+            "required": true
+          },
+          {
+            "key": "client_id",
+            "label": "Client ID",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "silo",
+            "required": true
+          },
+          {
+            "key": "client_secret",
+            "label": "Client Secret",
+            "control": "ADMIN_FORM_CONTROL_PASSWORD",
+            "placeholder": "OIDC client secret",
+            "required": true,
+            "secret": true
+          },
+          {
+            "key": "scopes",
+            "label": "Scopes",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "openid profile email",
+            "required": false
+          },
+          {
+            "key": "subject_claim",
+            "label": "Subject claim",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "sub",
+            "required": false
+          },
+          {
+            "key": "email_claim",
+            "label": "Email claim",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "email",
+            "required": false
+          },
+          {
+            "key": "display_name_claim",
+            "label": "Display name claim",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "name",
+            "required": false
+          }
+        ],
+        "submit_label": "Save OIDC settings"
+      }
+    }
+  ]
+}
