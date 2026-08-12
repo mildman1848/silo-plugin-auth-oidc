@@ -36,7 +36,7 @@ Keep a local admin recovery login until SSO has been verified.
 
 ```bash
 go test ./...
-go build -ldflags "-X main.version=0.1.1" -o bin/silo-plugin-auth-oidc .
+go build -ldflags "-X main.version=0.1.2" -o bin/silo-plugin-auth-oidc .
 ./bin/silo-plugin-auth-oidc manifest
 ```
 

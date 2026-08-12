@@ -20,7 +20,7 @@ import (
 //go:embed manifest.json
 var manifestFS embed.FS
 
-var version = "0.1.1"
+var version = "0.1.2"
 
 type runtimeServer struct {
 	pluginv1.UnimplementedRuntimeServer
@@ -67,7 +67,7 @@ func loadManifest() (*pluginv1.PluginManifest, error) {
 		return nil, err
 	}
 	data = []byte(strings.ReplaceAll(string(data), "__CHECKSUM__", strings.Repeat("0", 64)))
-	data = []byte(strings.ReplaceAll(string(data), "\"version\": \"0.1.1\"", fmt.Sprintf("\"version\": \"%s\"", version)))
+	data = []byte(strings.ReplaceAll(string(data), "\"version\": \"0.1.2\"", fmt.Sprintf("\"version\": \"%s\"", version)))
 	var manifest pluginv1.PluginManifest
 	if err := protojson.Unmarshal(data, &manifest); err != nil {
 		return nil, err

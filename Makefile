@@ -1,4 +1,4 @@
-VERSION ?= 0.1.0
+VERSION ?= 0.1.2
 BINARY ?= silo-plugin-auth-oidc
 
 .PHONY: test build manifest clean
