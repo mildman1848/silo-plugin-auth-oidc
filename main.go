@@ -20,7 +20,7 @@ import (
 //go:embed manifest.json
 var manifestFS embed.FS
 
-var version = "0.1.0"
+var version = "0.1.1"
 
 type runtimeServer struct {
 	pluginv1.UnimplementedRuntimeServer
@@ -66,12 +66,21 @@ func loadManifest() (*pluginv1.PluginManifest, error) {
 	if err != nil {
 		return nil, err
 	}
-	checksum := sha256.Sum256([]byte(strings.TrimSpace(version)))
-	data = []byte(strings.ReplaceAll(string(data), "__CHECKSUM__", hex.EncodeToString(checksum[:])))
-	data = []byte(strings.ReplaceAll(string(data), "\"version\": \"0.1.0\"", fmt.Sprintf("\"version\": \"%s\"", version)))
+	data = []byte(strings.ReplaceAll(string(data), "__CHECKSUM__", strings.Repeat("0", 64)))
+	data = []byte(strings.ReplaceAll(string(data), "\"version\": \"0.1.1\"", fmt.Sprintf("\"version\": \"%s\"", version)))
 	var manifest pluginv1.PluginManifest
 	if err := protojson.Unmarshal(data, &manifest); err != nil {
 		return nil, err
 	}
+	executablePath, err := os.Executable()
+	if err != nil {
+		return nil, fmt.Errorf("resolve executable path: %w", err)
+	}
+	binaryData, err := os.ReadFile(executablePath)
+	if err != nil {
+		return nil, fmt.Errorf("read executable %q: %w", executablePath, err)
+	}
+	checksum := sha256.Sum256(binaryData)
+	manifest.Checksum = hex.EncodeToString(checksum[:])
 	return &manifest, nil
 }
