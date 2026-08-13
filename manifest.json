@@ -1,6 +1,6 @@
 {
   "plugin_id": "mildman1848.oidc",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "checksum": "__CHECKSUM__",
   "silo_api_version": "v1",
   "category": "Authentication/SSO",
@@ -8,7 +8,7 @@
     "display_name": "OIDC SSO",
     "summary": "Generic OIDC authentication provider for Silo Server.",
     "description_markdown": "Adds OAuth2/OIDC sign-in to Silo using a self-hosted identity provider such as Authelia, Authentik, or Keycloak. The plugin uses OIDC discovery, authorization-code flow, userinfo claims, and Silo's auth_provider.v1 auto-provisioning/binding model.",
-    "setup_markdown": "1. Create an OIDC confidential client in Authelia, Authentik, Keycloak, or another OIDC provider.\n2. Configure redirect URI in the IdP as shown by Silo's plugin auth binding/OAuth setup. It usually follows Silo's `/api/v1/auth/oauth/{installation_id}/callback` route.\n3. Install this plugin and configure Issuer URL, Client ID, Client Secret, and optional scopes.\n4. Enable the plugin auth binding in Silo Admin \u2192 Plugins, choose auto-provision/default-login according to your policy, then test login.\n\nSecurity: prefer authorization-code flow over LDAP password binds. Keep local admin recovery credentials enabled until SSO login has been verified.",
+    "setup_markdown": "1. Create an OIDC confidential client in Authelia, Authentik, Keycloak, or another OIDC provider.\n2. Configure redirect URI in the IdP as shown by Silo's plugin auth binding/OAuth setup. It usually follows Silo's `/api/v1/auth/oauth/{installation_id}/callback` route.\n3. Install this plugin and configure Issuer URL, Client ID, Client Secret, and optional scopes.\n4. For existing local Silo users, set `subject_claim` to the claim you want Silo to use as `external_subject` before first SSO login. For Authelia migrations from local users, `preferred_username` is the pragmatic choice when local usernames already match the SSO usernames.\n5. Pre-link existing users with `scripts/link-existing-user.sh` or the equivalent `plugin_auth_identities` row.\n6. Enable the plugin auth binding in Silo Admin → Plugins, choose auto-provision/default-login according to your policy, restart Silo if the binding changed, then test login.\n\nSecurity: prefer authorization-code flow over LDAP password binds. Keep local admin recovery credentials enabled until SSO login has been verified. Prefer explicit existing-user linking over broad auto-provisioning.",
     "homepage_url": "https://github.com/mildman1848/silo-plugin-auth-oidc",
     "source_url": "https://github.com/mildman1848/silo-plugin-auth-oidc",
     "support_url": "https://github.com/mildman1848/silo-plugin-auth-oidc/issues",
