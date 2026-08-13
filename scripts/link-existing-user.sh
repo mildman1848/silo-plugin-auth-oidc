@@ -10,7 +10,11 @@ set -euo pipefail
 #     scripts/link-existing-user.sh --user philipp --external-subject philipp --apply
 #
 #   PSQL_COMMAND='docker exec -i silo-postgres psql -U silo -d silo' \
-#     scripts/link-existing-user.sh --user philipp --external-subject '<oidc-sub>' --plugin-installation-id 11 --apply
+#     scripts/link-existing-user.sh --user philipp --external-subject '<oidc-sub>' --apply
+#
+#   # Only needed if more than one OIDC plugin installation exists:
+#   PSQL_COMMAND='docker exec -i silo-postgres psql -U silo -d silo' \
+#     scripts/link-existing-user.sh --user philipp --external-subject '<oidc-sub>' --plugin-installation-id '<actual-installation-id>' --apply
 
 usage() {
   cat <<'USAGE'

@@ -68,14 +68,14 @@ PSQL_COMMAND='docker compose exec -T postgres psql -U silo -d silo' \
   --apply
 ```
 
-If multiple OIDC plugin installations exist, pass the installation id explicitly:
+By default the script resolves the OIDC plugin installation dynamically from `plugin_id` (`mildman1848.oidc`). If multiple OIDC plugin installations exist, pass the actual installation id shown by Silo or queried from `plugin_installations`:
 
 ```bash
 PSQL_COMMAND='docker compose exec -T postgres psql -U silo -d silo' \
   scripts/link-existing-user.sh \
   --user philipp \
   --external-subject '<oidc-sub>' \
-  --plugin-installation-id 11 \
+  --plugin-installation-id '<actual-installation-id>' \
   --apply
 ```
 
